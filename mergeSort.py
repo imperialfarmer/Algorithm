@@ -82,6 +82,7 @@ def brute(array):
 def main(fileName):
     array = readData(fileName)
     sortedArray, count = inversionCount(array)
+    print('-- inversion number --')
     print('dac   = ', count)
     print('brute =  2407905288')
 
