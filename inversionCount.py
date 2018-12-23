@@ -36,7 +36,7 @@ def readData(fileName):
     return data
 
 
-def splitCount(array1, array2):
+def merge(array1, array2):
     # array1 and array2 have been sorted already
     i = j = count = 0
     array3 = []
@@ -65,7 +65,7 @@ def inversionCount(array):
 
         array1,c1 = inversionCount(left)
         array2,c2 = inversionCount(right)
-        array3,c3 = splitCount(array1, array2)
+        array3,c3 = merge(array1, array2)
         return array3, (c1+c2+c3)
 
 def brute(array):
