@@ -88,4 +88,4 @@ def main(fileName):
 
 
 if __name__ == '__main__':
-    main('inversion_data.txt')
+    main('inversionCount.txt')
