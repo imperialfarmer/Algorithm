@@ -34,12 +34,6 @@ def partition(array, l, r):
 
 
 def pivot(array, mode):
-    # mid = math.floor(len(array))
-    # avg = np.average(array,axis=0)
-    # avgPos = 0
-    # for i in range(len(array)):
-    #     if array[i] == avg:
-    #         avgPos = i
     n = len(array)
     pos = -1
     if mode == 0:
@@ -86,6 +80,8 @@ def quickSort(array, mode = 0):
 
         # do partition
         array,splitPos = partition(array,0,len(array)-1)
+        # the number on splitPos is already on the right place, so the partition
+        # are only operated on left part and right part except the splitPos one
         array[:splitPos], leftCount = quickSort(array[:splitPos],mode)
         array[splitPos+1:], rightCount = quickSort(array[splitPos+1:],mode)
 
