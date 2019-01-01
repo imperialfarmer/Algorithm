@@ -106,10 +106,10 @@ def countCrossingEdges(maxIter, fileName):
             print('num = ',len(resList[0]))
             print('cut = ', resCut)
             print('\n')
-        sys.stdout.write('\r' + '  -> Iteration ' + str(i+1) + '/' + str(maxIter) + ': MIN = ' + str(len(resList[0])))
-        sys.stdout.flush()
         edgeNum.append(len(resList[0]))
         cutList.append(np.array(resCut))
+        sys.stdout.write('\r' + '  -> Iteration ' + str(i+1) + '/' + str(maxIter) + ': MIN = ' + str(min(edgeNum[:])))
+        sys.stdout.flush()
 
         i += 1
 
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     print('----------')
 
     # get the minimum cut
-    edgeNum, cutList = countCrossingEdges(5000, './kargerMinCut.txt')
+    edgeNum, cutList = countCrossingEdges(200, './kargerMinCut.txt')
     print('\n')
     print('Minimum Cut = ', min(edgeNum[:]))
     
