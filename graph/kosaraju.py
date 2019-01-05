@@ -5,234 +5,143 @@ kosaraju's two pass algorithm is to compute the Strongly Connected Components (S
 
 import sys
 
+def main():
+    print('\n-- Kosaraju\'s Two Pass Algorithm --')
 
-#! sorting algorithms
-def merge(array1, array2):
-    # array1 and array2 have been sorted already
-    i = j = 0
-    array3 = []
-    while i < len(array1) and j < len(array2):
-        if array1[i][1] < array2[j][1]:
-            array3.append(array1[i])
-            i += 1
-        elif array1[i][1] > array2[j][1]:
-            array3.append(array2[j])
-            j += 1
-    # fill arrays with the missed part of array1 and array2
-    array3.extend(array1[i:])
-    array3.extend(array2[j:])
-    return array3
+    # make a graph and its reverse from the given data
+    graph = {}
+    graphR = {}
 
-
-def mergeSort(array):
-    n = len(array)
-    if n <= 1:
-        return array
-    else:
-        mid = int(n/2)
-        left = array[:mid]
-        right = array[mid:]
-
-        array1 = mergeSort(left)
-        array2 = mergeSort(right)
-        array3 = merge(array1, array2)
-        return array3
-
-
-#! graph algorithms
-def readEdgeList(fileName):
-    debug = False
-    file = open(fileName)
-    edgeList = [] # tail -> head
-    count = 1
-    # convert the edge list to vertices list
-    # in vertices list, the head vertex from this vertex is recorded
-    nodeList = []
-    tmp = [False]
-    nodeCount = 1
-    maxIndex = 1
-    for line in file:
-        edgeList.append([int(line.split()[0]),int(line.split()[1])])
-        if int(line.split()[1]) > maxIndex:
-            maxIndex = int(line.split()[1])
-        if int(line.split()[0]) == nodeCount:
-            tmp.append(int(line.split()[1]))
+    print('\n-> Reading Graph')
+    f = open("./SCC.txt", 'r')
+    line = f.readline()
+    while line:
+        edge = [int(e) for e in line.split()]
+        if edge[0] in graph:
+            graph[edge[0]].append(edge[1])
         else:
-            nodeList.append(tmp)
-            if debug:
-                print(tmp)
-                input()
-                print(nodeList)
-            tmp = [False]
-            nodeCount += 1
-            while nodeCount != int(line.split()[0]):
-                nodeCount += 1
-                nodeList.append([False])
-            tmp.append(int(line.split()[1]))
+            graph[edge[0]] = [edge[1]]
+        if edge[1] in graphR:
+            graphR[edge[1]].append(edge[0])
+        else:
+            graphR[edge[1]] = [edge[0]]
+        line = f.readline()
+    f.close()
+    print('   Finish\n')
 
-        sys.stdout.write('\r   Edge '+str(count)+' Vertex '+str(nodeCount))
+    # run depth-first search on graph reverse
+    print('-> DFS on Grev')
+    node_post = {}
+    post_node = {}
+    post = 1
+    count = 1
+    for node in graphR:
+        if not (node in node_post):
+            prev_dict, prev_index, prev_set = {}, 1, set([node])
+            prev_dict[prev_index] = node
+            try:
+                nodes = graphR[node][:]
+            except:
+                nodes = []
+            next_dict, next_index, next_set = {}, 0, set()
+            for n in nodes:
+                if not ((n in prev_set) or (n in next_set) or
+                        (n in node_post)):
+                    next_index += 1
+                    next_dict[next_index] = n
+                    next_set.add(n)
+            while next_dict:
+                if next_dict[next_index] in prev_set:
+                    next_set.remove(next_dict[next_index])
+                    del next_dict[next_index]
+                    next_index = len(next_dict)
+                else:
+                    prev_set.add(next_dict[next_index])
+                    prev_index += 1
+                    prev_dict[prev_index] = next_dict[next_index]
+                    try:
+                        nodes = graphR[next_dict[next_index]][:]
+                    except:
+                        nodes = []
+                    next_set.remove(next_dict[next_index])
+                    del next_dict[next_index]
+                    next_index = len(next_dict)
+                    for n in nodes:
+                        if not ((n in prev_set) or (n in next_set) or
+                                (n in node_post)):
+                            next_index += 1
+                            next_dict[next_index] = n
+                            next_set.add(n)
+                    next_index = len(next_dict)
+            post = post + len(prev_dict)
+            for element in prev_dict:
+                if not prev_dict[element] in node_post:
+                    node_post[prev_dict[element]] = post - element
+                    post_node[post - element] = prev_dict[element]
+        sys.stdout.write('\r   Grev '+str(count)+'/'+str(len(graphR)))
         sys.stdout.flush()
         count += 1
-    nodeList.append(tmp)
-    file.close()
-    
-    print('\n')
-    print('   Readjust missed nodes')
-    maxNum = len(nodeList)
-    print('   Current max = '+str(maxNum)+' max in list = '+str(maxIndex))
-    while  maxNum < maxIndex:
-        nodeList.append([False])
-        maxNum += 1
-    print('   Now total node num = ', maxNum)
-    
-    nodeListRev = []
-    for i in range(len(nodeList)):
-        nodeListRev.append([False])
-    
-    count = 1
-    for pair in edgeList:
-        head = pair[0]
-        tail = pair[1]
-        nodeListRev[tail-1][0] = False
-        nodeListRev[tail-1].append(head)
-        sys.stdout.write('\r   Grev Edge '+str(count)+'/'+str(len(edgeList))+' generated')
+    print('   Finish\n')
+
+    # run DFS on graph (by reverse postorder)
+    print('-> DFS on G')
+    reverse_postorder = post_node.values()[::-1]
+    marked = set()
+    results = []
+    order = 0
+    length = len(reverse_postorder)
+    while order < length:
+        node = reverse_postorder[order]
+        if (not (node in marked)):
+            prev_dict, prev_index, prev_set = {}, 1, set([node])
+            prev_dict[prev_index] = node
+            try:
+                nodes = graph[node][:]
+            except:
+                nodes = []
+            next_dict, next_index, next_set = {}, 0, set()
+            for n in nodes:
+                if not ((n in prev_set) or (n in next_set) or (n in marked)):
+                    next_index += 1
+                    next_dict[next_index] = n
+                    next_set.add(n)
+            while next_dict:
+                if next_dict[next_index] in prev_set:
+                    next_set.remove(next_dict[next_index])
+                    del next_dict[next_index]
+                    next_index = len(next_dict)
+                else:
+                    prev_set.add(next_dict[next_index])
+                    prev_index += 1
+                    prev_dict[prev_index] = next_dict[next_index]
+                    try:
+                        nodes = graph[next_dict[next_index]][:]
+                    except:
+                        nodes = []
+                    next_set.remove(next_dict[next_index])
+                    del next_dict[next_index]
+                    next_index = len(next_dict)
+                    for n in nodes:
+                        if not ((n in prev_set) or (n in next_set) or
+                                (n in marked)):
+                            next_index += 1
+                            next_dict[next_index] = n
+                            next_set.add(n)
+                    next_index = len(next_dict)
+            # add the size of the previous strongly connected component
+            results.append(len(prev_dict))
+        for element in prev_dict:
+            marked.add(prev_dict[element])
+        sys.stdout.write('\r   G '+str(order+1)+'/'+str(length))
         sys.stdout.flush()
-        count += 1
+        order += 1
+    print('   Finish\n')
 
-    return nodeList, nodeListRev, len(nodeList)+len(edgeList)
-
-
-def DFSLoop(G, queueList):
-    #! initialize parameters
-    global t
-    t = 0
-    global s
-    s = 0
-
-    f = []
-    leader = []
-    for i in range(len(G)):
-        f.append([i+1,-1])
-        leader.append(-1)
-
-    #! loop through the graph using DFS
-    index = 1
-    for i in queueList:
-        if not G[i][0]:
-            s = i+1
-            f,leader = DFS(G, i, f, leader)
-        sys.stdout.write('\r   Finish '+str(index)+'/'+str(len(queueList)))
-        sys.stdout.flush()
-        index += 1
-
-    return f, leader
-
-
-def DFS(G, i, f, leader):
-    debug = False
-    global t
-    global s
-    if debug:
-        print('time = ', t)
-    G[i][0] = True
-    leader[i] = s
-    if debug:
-        print(G[i][1:])
-    if len(G[i]) > 1:
-        for headIndex in G[i][1:]:
-            if not G[headIndex-1][0]:
-                if debug:
-                    print(str(i+1) + '->' + str(headIndex))
-                    input()
-                f,leader = DFS(G, headIndex-1, f, leader)
-    t += 1
-    f[i][1] = t
-    if debug:
-        print('f('+str(i+1)+')='+str(t))
-        print('leader('+str(i+1)+')='+str(leader[i]))
-
-    return f,leader
-
-
-def kosaraju(graphDir):
-    print('-- Kosaraju\'s Two Pass Algorithm --')
-    debug = False
-    #! read input
-    print('-> Reading Graph')
-    global G
-    global Grev
-    G, Grev, recLimit = readEdgeList(graphDir)
-    print('\n')
-    print('   G[1] =',G[0])
-    print('   G[4] =',G[3])
-    print('   G[-1]=',G[-1])
-    sys.setrecursionlimit(recLimit)
-    if debug:
-        print('\nG = \n',G)
-        print('\nGrev = \n',Grev)
-    print('\n')
-    
-    #! DFS on G
-    print('-> Two Pass')
-    queueList = []
-    for i in range((len(G)-1),-1,-1):
-        queueList.append(i)
-    if debug:
-        print('queueList = ',queueList)
-    f,leader = DFSLoop(G, queueList)
-    if debug:
-        print(f)
-    print('   G finished')
-
-    #! DFS on Grev
-    fSorted = mergeSort(f)
-    if debug:
-        print(fSorted)
-    queueListRev = []
-    for i in range((len(f)-1),-1,-1):
-        queueListRev.append(fSorted[i][0]-1)
-    fRev,leaderRev = DFSLoop(Grev,queueListRev)
-    if debug:
-        print(leaderRev)
-    print('   Grev finished')
-
-    #! store the node acoording to their leader
-    index = 0
-    leaderBoard = []
-    SSC = []
-    for leaderIndex in leaderRev:
-        if debug:
-            print('checking ', leaderIndex)
-        if leaderIndex not in leaderBoard:
-            leaderBoard.append(leaderIndex)
-            SSC.append([index+1])
-        else:
-            leaderBoardRanking = leaderBoard.index(leaderIndex)
-            SSC[leaderBoardRanking].append(index+1)
-        index += 1
-    if debug:
-        print(leaderBoard)
-        print(SSC)
-    print('   SCC finished')
-
-    return leaderBoard, SSC
+    # output the sizes of the 5 largest SCCs in the given graph
+    solution = ','.join(str(x) for x in sorted(results + [0] * 5,
+                                               reverse=True)[:5])
+    print solution
 
 
 if __name__ == '__main__':
-    #! for testing
-    if len(sys.argv) != 1:
-        print('\n')
-        leaderBoard, SSC = kosaraju('./SCC_test.txt')
-        print('\n')
-    
-        print(SSC)
-
-    else:
-        #! code
-        print('\n')
-        leaderBoard, SSC = kosaraju('./SCC.txt')
-        print('\n')
-    
-        print(SSC)         
-
-
+    main()
