@@ -39,33 +39,33 @@ def dijkstra(graph, s, t):
     # initialize containers
     distQueue = [(0,s,())]
     visited = set()
-    track = {s:0}
+    distFromSource = {s:0}
 
     while distQueue:
         # get the path with minimum distance so far
-        dist_v, v, path = heappop(distQueue)
+        dist_sv, v, path = heappop(distQueue)
         if v not in visited:
             visited.add(v)  # mark the node visited
-            path = path + (v,) # add v into path
+            path = path + (v,) # add v into path showing how searching gets to v
             
             # if the searching reaches the target
             if v == t:
-                return (dist_v, path)
+                return (dist_sv, path)
             
             # if not, continue searching the neighboured vertex
             for i in range(len(graph[v][0])):
                 w = graph[v][0][i]
                 if w not in visited:
-                    dist_vw = graph[v][1][i]
-                    dist_w = dist_v + dist_vw
+                    dist_vw = graph[v][1][i]    # distance between current searching node v and candidate w
+                    dist_sw = dist_sv + dist_vw   # distance from s to w
 
                     # read the previous distance record from 'track'
                     # will get None if there is no record
-                    prevDist_w = track.get(w, None)
+                    prevDist_sw = distFromSource.get(w, None)
                     # update the recorded distance if the current path is better
-                    if prevDist_w is None or dist_w <= prevDist_w:
-                        track[w] = dist_w
-                        heappush(distQueue, (dist_w, w, path))
+                    if prevDist_sw is None or dist_sw <= prevDist_sw:
+                        distFromSource[w] = dist_sw
+                        heappush(distQueue, (dist_sw, w, path))
 
 
 if __name__ == '__main__':
