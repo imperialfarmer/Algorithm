@@ -57,7 +57,7 @@ def dijkstra(graph, s, t):
                 w = graph[v][0][i]
                 if w not in visited:
                     dist_vw = graph[v][1][i]    # distance between current searching node v and candidate w
-                    dist_sw = dist_sv + dist_vw   # distance from s to w
+                    dist_sw = dist_sv + dist_vw   # distance from s to w via v
 
                     # read the previous distance record from 'track'
                     # will get None if there is no record
