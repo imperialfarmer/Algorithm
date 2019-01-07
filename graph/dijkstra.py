@@ -6,7 +6,7 @@ Solution: 2599, 2610, 2947, 2052, 2367, 2399, 2029, 2442, 2505, 3068
 """
 
 import sys
-from heapq import *
+from heapq import heappush,heappop  # the heap module
 
 
 #! prepare the data
@@ -86,10 +86,3 @@ if __name__ == '__main__':
 
     print('Final solution')
     print(solution)
-    
-
-
-
-
-
-            
