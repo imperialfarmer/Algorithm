@@ -1,8 +1,8 @@
 # -*- using: utf-8 -*-
 """
 dijkstra algorithm for Path-finding
-Solution: 2599,2610,3038,2052,2367,2399,2029,2442,3386,3578
-          2599, 2610, 2947, 2052, 2367, 2399, 2029, 2442, 2505, 3068
+Solution: 2599, 2610, 2947, 2052, 2367, 2399, 2029, 2442, 2505, 3068
+    Mine: 2599, 2610, 2947, 2052, 2367, 2399, 2029, 2442, 2505, 3068
 """
 
 import sys
@@ -10,9 +10,6 @@ from heapq import *
 
 
 #! prepare the data
-global nodeNum
-
-
 def readDirectedEdge(fileName):
     file = open(fileName)
     graph = {}
@@ -29,9 +26,6 @@ def readDirectedEdge(fileName):
         count += 1
     file.close()
     print('\n')
-
-    global nodeNum
-    nodeNum = count-1
 
     return graph
 
@@ -67,10 +61,10 @@ def dijkstra(graph, s, t):
 
                     # read the previous distance record from 'track'
                     # will get None if there is no record
-                    prevDist_vw = track.get(w, None)
+                    prevDist_w = track.get(w, None)
                     # update the recorded distance if the current path is better
-                    if prevDist_vw is None or dist_w < prevDist_vw:
-                        track[w] = dist_vw
+                    if prevDist_w is None or dist_w <= prevDist_w:
+                        track[w] = dist_w
                         heappush(distQueue, (dist_w, w, path))
 
 
