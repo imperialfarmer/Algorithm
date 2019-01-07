@@ -45,8 +45,8 @@ def dijkstra(graph, s, t):
         # get the path with minimum distance so far
         dist_sv, v, path = heappop(distQueue)
         if v not in visited:
-            visited.add(v)  # mark the node visited
-            path = path + (v,) # add v into path showing how searching gets to v
+            visited.add(v)      # mark the node visited
+            path = path + (v,)  # add v into path showing how searching gets to v
             
             # if the searching reaches the target
             if v == t:
@@ -56,14 +56,14 @@ def dijkstra(graph, s, t):
             for i in range(len(graph[v][0])):
                 w = graph[v][0][i]
                 if w not in visited:
-                    dist_vw = graph[v][1][i]    # distance between current searching node v and candidate w
-                    dist_sw = dist_sv + dist_vw   # distance from s to w via v
+                    dist_vw = graph[v][1][i]        # distance between current searching node v and candidate w
+                    dist_sw = dist_sv + dist_vw     # distance from s to w via v
 
                     # read the previous distance record from 'track'
                     # will get None if there is no record
                     prevDist_sw = distFromSource.get(w, None)
                     # update the recorded distance if the current path is better
-                    if prevDist_sw is None or dist_sw <= prevDist_sw:
+                    if prevDist_sw is None or dist_sw < prevDist_sw:
                         distFromSource[w] = dist_sw
                         heappush(distQueue, (dist_sw, w, path))
 
@@ -74,11 +74,12 @@ if __name__ == '__main__':
     # print(graph)
 
     print('-> Searching Shortest Path')
+    source = 1
     targets = [7,37,59,82,99,115,133,165,188,197]
     solution = []
     for t in targets:
-        dist, path = dijkstra(graph,1,t)
-        print('-- TO '+ str(t) + ' --')
+        dist, path = dijkstra(graph,source,t)
+        print('-- FROM '+str(source)+' TO '+ str(t) + ' --')
         print(dist, path)
         print('\n')
         solution.append(dist)
