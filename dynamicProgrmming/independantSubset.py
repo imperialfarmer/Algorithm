@@ -18,6 +18,8 @@ def ReadPath(fileName):
         index += 1
     file.close()
 
+    assert num == len(w), 'Input size NOT right'
+
     return w
 
 
@@ -28,23 +30,14 @@ def FindWIS(w):
     for i in range(2,n+1):   
         a[i] = max(a[i-1],a[i-2]+w[i])
         i += 1
-    # print('\n')
-    # print(a)
     b = [0]*(n+1)
     j = n
     while j >= 1:
-        # print(str(a[j-1])+' | '+str(a[j-2])+'+'+str(path[i-1]))
         if a[j-1] >= a[j-2]+w[j]:
-            # print('case 1')
             j-=1
         else:
-            # print('case 2')
             b[j] = 1
             j-=2
-        # print('\n->',j)
-        # print(a[j])
-        # print(b)
-        # input('')
 
     return a,b
 
@@ -52,8 +45,7 @@ def FindWIS(w):
 if __name__ == '__main__':
     path = ReadPath('./mwis.txt')
     a,b = FindWIS(path)
-    # print(len(b))
-    # print(b)
+
     test = [1, 2, 3, 4, 17, 117, 517, 997]
     solution = [0]*len(test)
     for i in range(len(test)):
