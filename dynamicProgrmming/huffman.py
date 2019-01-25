@@ -3,6 +3,9 @@
 Generate the Huffman code for the data with given probabilities
 data is given like {'key': probability}
 '0' for lesser ptobability key, '1' for the bigger one
+* Solution
+    Max length = 19
+    Min length = 9
 """
 
 import sys
@@ -25,6 +28,7 @@ def readData(fileName):
             data[str(i)] = feq
             sum += feq
         i += 1
+    file.close()
 
     # calculate the probability
     for j in range(num):
