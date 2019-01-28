@@ -3,7 +3,7 @@
 Use dynamic programming to calculate knapsack problem
 Solution test = 44
 Solution 1 = 2493893
-Solution 2 =
+Solution 2 = 4243395
 """
 
 import sys
