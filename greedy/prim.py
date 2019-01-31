@@ -31,10 +31,6 @@ def ReadEdge(fileName):
     return edges, nodes
 
 
-def heapWay(edges,nodes):
-    
-
-
 def brute(edges,nodes):
     V = set()
     for i in range(1,len(nodes)+1):
