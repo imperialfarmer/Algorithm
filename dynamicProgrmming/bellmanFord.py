@@ -154,8 +154,14 @@ class BellmanFord:
 
         
 if __name__ == '__main__':
-    graph0 = Graph('./g1.txt')
-    # graph0.Info()
-    dist0 = BellmanFord(graph0,1)
-    dist0.ShortestPath(5,True)
+    fileNames = ['g1.txt', 'g2.txt', 'g3.txt']
+    for file in fileNames:
+        print('\n=========================')
+        print(' -- Name: '+file+' --\n')
+        graph0 = Graph(file)
+        # graph0.Info()
+        dist0 = BellmanFord(graph0,1)
+        dist0.ShortestPath(5,True)
+        print(' -- Finish --')
+        print('=========================\n')
 
